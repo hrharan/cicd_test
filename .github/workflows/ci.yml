@@ -1,0 +1,31 @@
+name: Python CI
+
+# 1. THE TRIGGER
+# Run this pipeline whenever someone pushes code to the repository
+on: [push]
+
+# 2. THE JOB
+jobs:
+  build-and-test:
+    # Run this job on a Linux server provided by GitHub
+    runs-on: ubuntu-latest
+
+    steps:
+    # Step A: Download your code from the repo to the server
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    # Step B: Install Python on the server
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+
+    # Step C: Install the testing tool (pytest)
+    - name: Install dependencies
+      run: |
+        pip install pytest
+
+    # Step D: Actually run the test
+    - name: Run tests
+      run: pytest
