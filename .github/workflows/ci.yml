@@ -1,31 +1,33 @@
-name: Python CI
+name: Full CI/CD Pipeline
 
-# 1. THE TRIGGER
-# Run this pipeline whenever someone pushes code to the repository
 on: [push]
 
-# 2. THE JOB
 jobs:
+  # JOB 1: THE FILTER (CI)
   build-and-test:
-    # Run this job on a Linux server provided by GitHub
     runs-on: ubuntu-latest
-
     steps:
-    # Step A: Download your code from the repo to the server
     - name: Checkout code
       uses: actions/checkout@v3
-
-    # Step B: Install Python on the server
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
         python-version: '3.9'
-
-    # Step C: Install the testing tool (pytest)
     - name: Install dependencies
-      run: |
-        pip install pytest
-
-    # Step D: Actually run the test
+      run: pip install pytest
     - name: Run tests
       run: pytest
+
+  # JOB 2: THE DELIVERY (CD)
+  deploy:
+    runs-on: ubuntu-latest
+    # VITAL: This tells GitHub to WAIT for the test job
+    needs: build-and-test 
+    
+    steps:
+      - name: Deploy to production
+        run: |
+          echo "🚀 Starting deployment..."
+          echo "Connnecting to server..."
+          echo "Copying files..."
+          echo "✅ Deployed successfully!"
