@@ -21,6 +21,10 @@ jobs:
     - name: Run tests
       run: pytest
 
+    # NEW STEP: Verify Docker Build
+    - name: Build Docker Image
+      run: docker build -t my-app:latest
+
   # JOB 2: THE DELIVERY (CD)
   deploy:
     runs-on: ubuntu-latest
