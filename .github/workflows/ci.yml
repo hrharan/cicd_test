@@ -28,9 +28,19 @@ jobs:
     needs: build-and-test 
     
     steps:
-      - name: Deploy to production
+      # Logic: Only run this step if we are on the 'main' branch
+      - name: Deploy to Staging
+        if: github.ref == 'refs/heads/main'
         run: |
-          echo "🚀 Starting deployment..."
-          echo "Connnecting to server..."
-          echo "Copying files..."
-          echo "✅ Deployed successfully!"
+          echo "✅ Tests passed. Deploying to Staging..."
+          # We use curl to hit the secret URL. The & wait prevents hanging.
+          curl "${{ secrets.RENDER_DEPLOY_HOOK_STAGING }}"
+      
+      # Logic: Only run this step if we push a Tag (like v1.0)
+      - name: Deploy to Production
+        if: startsWith(github.ref, 'refs/tags/v')
+        run: |
+          echo "🚀 PRODUCTION RELEASE DETECTED!"
+          echo "Deploying to Production Server..."
+          # Note: In a real setup, you'd have a second Secret for the Prod URL
+          # curl "${{ secrets.RENDER_DEPLOY_HOOK_PROD }}"
